@@ -1,4 +1,4 @@
-# Evil App Showcase
+# Evil Android App Showcase
 Demonstrates different techniques for hiding the app from the user, obfuscation, detection evasion, persistence and abuse.
 All these were gathered from the papers or from the apps, found in the wild. 
 
