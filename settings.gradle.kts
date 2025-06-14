@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "EvilApp Showcase"
 include(":app")
+include(":app:armariris_example")
