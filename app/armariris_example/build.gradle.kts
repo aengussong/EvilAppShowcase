@@ -14,7 +14,11 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags += ""
+                /**
+                 * Uncomment for enabling armarirs obfuscation for armariris_example module.
+                 * A correct path to the armariris should be set in the gradle.properties.
+                 * */
+                //arguments += listOf("-DARMARIRIS_PATH=${property("armaririsPath")}")
             }
         }
     }

@@ -12,6 +12,13 @@ cmake_minimum_required(VERSION 3.22.1)
 # build script scope).
 project("armariris_example")
 
+if(DEFINED ARMARIRIS_PASS_PATH)
+    message(STATUS "Armariris obfuscation enabled for native-obfuscation")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xclang -load -Xclang ${ARMARIRIS_PATH} -mllvm -sobf -mllvm -fla")
+else()
+    message(STATUS "Armariris obfuscation disabled")
+endif()
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
