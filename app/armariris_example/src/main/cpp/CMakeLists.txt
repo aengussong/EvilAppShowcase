@@ -12,12 +12,9 @@ cmake_minimum_required(VERSION 3.22.1)
 # build script scope).
 project("armariris_example")
 
-if(DEFINED ARMARIRIS_PASS_PATH)
-    message(STATUS "Armariris obfuscation enabled for native-obfuscation")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xclang -load -Xclang ${ARMARIRIS_PATH} -mllvm -sobf -mllvm -fla")
-else()
-    message(STATUS "Armariris obfuscation disabled")
-endif()
+# Set compiler to Armariris clang
+set(CMAKE_C_COMPILER "/home/ubuntu/Armariris/build/bin/clang")
+set(CMAKE_CXX_COMPILER "/home/ubuntu/Armariris/build/bin/clang++")
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -35,6 +32,13 @@ endif()
 add_library(${CMAKE_PROJECT_NAME} SHARED
     # List C/C++ source files with relative paths to this CMakeLists.txt.
     armariris_example.cpp)
+
+# Set Armariris flags
+# Should be set after the library is added
+target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
+        -mllvm -sobf
+        -mllvm -fla
+)
 
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this
