@@ -15,6 +15,11 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags += ""
+                arguments += listOf(
+                    "-DCMAKE_C_COMPILER=/home/ubuntu/Armariris/build/bin/clang",
+                    "-DCMAKE_CXX_COMPILER=/home/ubuntu/Armariris/build/bin/clang++",
+                    "-DCMAKE_CXX_FLAGS=-mllvm -sobf -mllvm -fla"
+                )
             }
         }
     }
