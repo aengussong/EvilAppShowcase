@@ -1,27 +1,33 @@
 package com.aengussong.evilappshowcase
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.telephony.TelephonyManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.aengussong.evilappshowcase.screen.detector.EmulatorCheckupScreen
+import com.aengussong.evilappshowcase.screen.detector.FridaCheckupScreen
+import com.aengussong.evilappshowcase.screen.detector.RootCheckupScreen
+import com.aengussong.evilappshowcase.screen.navigation.ANALYSIS_DETECTOR_CHOOSER
+import com.aengussong.evilappshowcase.screen.navigation.EMULATOR_CHECKUP_SCREEN
+import com.aengussong.evilappshowcase.screen.navigation.FRIDA_CHECKUP_SCREEN
+import com.aengussong.evilappshowcase.screen.navigation.ROOT_CHECKUP_SCREEN
 import com.aengussong.evilappshowcase.ui.theme.EvilAppShowcaseTheme
 
 class MainActivity : ComponentActivity() {
@@ -34,10 +40,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             EvilAppShowcaseTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    EmulatorCheckup(
-                        EmulatorDetector.emulatorCheckup(telephonyManager),
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    MainScreen(telephonyManager, packageManager, innerPadding)
                 }
             }
         }
@@ -45,50 +48,37 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun EmulatorCheckup(
-    emulatorCheckupList: Map<String, EmulatorProbability>,
-    modifier: Modifier = Modifier
-) {
-    Column(modifier = modifier.padding(10.dp)) {
-        Text(text = "Color coding:")
-        val colorCodingHints = mapOf(
-            "   is emulator" to EmulatorProbability.IS_EMULATOR,
-            "   probably is emulator" to EmulatorProbability.PROBABLY_EMULATOR,
-            "   not emulator" to EmulatorProbability.NOT_EMULATOR
-        )
+fun MainScreen(telephonyManager: TelephonyManager, packageManager: PackageManager, innerPadding: PaddingValues) {
+    val navController = rememberNavController()
 
-        EmulatorCheckupList(colorCodingHints)
-
-        Text(
-            text = "Emulator checkup results",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(top = 10.dp)
-        )
-        EmulatorCheckupList(emulatorCheckupList)
+    NavHost(navController, startDestination = ANALYSIS_DETECTOR_CHOOSER) {
+        composable(ANALYSIS_DETECTOR_CHOOSER) { AnalysisDetectorChooserScreen(navController) }
+        composable(EMULATOR_CHECKUP_SCREEN) { EmulatorCheckupScreen(telephonyManager, innerPadding) }
+        composable(FRIDA_CHECKUP_SCREEN) { FridaCheckupScreen(innerPadding) }
+        composable(ROOT_CHECKUP_SCREEN) { RootCheckupScreen(packageManager, innerPadding) }
     }
 }
 
 @Composable
-private fun EmulatorCheckupList(
-    emulatorCheckupList: Map<String, EmulatorProbability>,
-    modifier: Modifier = Modifier
-) {
-    fun EmulatorProbability.asColor(): Color {
-        return when (this) {
-            EmulatorProbability.IS_EMULATOR -> Color.Red
-            EmulatorProbability.NOT_EMULATOR -> Color.Black
-            EmulatorProbability.PROBABLY_EMULATOR -> Color(255, 140, 0)
+fun AnalysisDetectorChooserScreen(navController: NavController) {
+    Column(
+        verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Button(onClick = {
+            navController.navigate(EMULATOR_CHECKUP_SCREEN)
+        }) {
+            Text("Emulator Checkup")
         }
-    }
-
-    LazyColumn(modifier = modifier) {
-        items(emulatorCheckupList.entries.toList()) { (property, emulatorProbability) ->
-            Text(buildAnnotatedString {
-                withStyle(SpanStyle(color = emulatorProbability.asColor())) {
-                    append(property)
-                }
-            })
+        Button(onClick = {
+            navController.navigate(FRIDA_CHECKUP_SCREEN)
+        }) {
+            Text("Frida Checkup")
+        }
+        Button(onClick = {
+            navController.navigate(ROOT_CHECKUP_SCREEN)
+        }) {
+            Text("Root Checkup")
         }
     }
 }

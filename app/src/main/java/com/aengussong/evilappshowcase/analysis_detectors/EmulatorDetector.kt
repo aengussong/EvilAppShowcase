@@ -1,9 +1,10 @@
-package com.aengussong.evilappshowcase
+package com.aengussong.evilappshowcase.analysis_detectors
 
 import android.os.Build
 import android.telephony.TelephonyManager
 import androidx.core.os.EnvironmentCompat
 import com.aengussong.evilappshowcase.util.beginsWith
+import com.aengussong.evilappshowcase.util.fileExists
 import com.aengussong.evilappshowcase.util.includes
 
 enum class EmulatorProbability {
@@ -55,6 +56,12 @@ object EmulatorDetector {
             checkProperty("TelephonyManager.getPhoneType()", telephonyManager.phoneType.toString(), probablyEmulatorCanary = { it == "1" }),
             checkProperty("TelephonyManager.getSimCountryIso()", telephonyManager.simCountryIso, probablyEmulatorCanary = { it == "us" }),
             checkProperty("TelephonyManager.getNetworkOperatorName()", telephonyManager.networkOperatorName, probablyEmulatorCanary = { it == "Android" }),
+
+            checkFile("/dev/docket/qemud"),
+            checkFile("/dev/qemu_pipe"),
+            checkFile("/system/lib/libc_malloc_debug_qemu.so"),
+            checkFile("/sys/qemu_trace"),
+            checkFile("/system/bin/qemu_props")
         )
     }
 
@@ -72,6 +79,22 @@ object EmulatorDetector {
         }
 
         val entry = "$propertyName: $propertyValue"
+        return entry to getProbability()
+    }
+
+    private fun checkFile(
+        filePath: String,
+        emulatorCanary: (Boolean) -> Boolean = { fileExists -> fileExists },
+        probablyEmulatorCanary: (Boolean?) -> Boolean = { false }
+    ): Pair<String, EmulatorProbability> {
+        val fileExists = filePath.fileExists()
+        fun getProbability(): EmulatorProbability {
+            if (emulatorCanary(fileExists)) return EmulatorProbability.IS_EMULATOR
+            if (probablyEmulatorCanary(fileExists)) return EmulatorProbability.PROBABLY_EMULATOR
+            return EmulatorProbability.NOT_EMULATOR
+        }
+
+        val entry = "$filePath file ${if (fileExists) "was found" else "not found"}"
         return entry to getProbability()
     }
 }
