@@ -2,7 +2,6 @@ package com.aengussong.evilappshowcase.analysis_detectors
 
 import android.os.Build
 import android.telephony.TelephonyManager
-import androidx.core.os.EnvironmentCompat
 import com.aengussong.evilappshowcase.util.beginsWith
 import com.aengussong.evilappshowcase.util.fileExists
 import com.aengussong.evilappshowcase.util.includes
@@ -22,15 +21,13 @@ object EmulatorDetector {
             checkProperty("Build.BRAND", Build.BRAND, emulatorCanary = { it.beginsWith("generic") }),
             checkProperty("Build.DEVICE", Build.DEVICE, emulatorCanary = { it.beginsWith("generic") }),
             checkProperty("Build.FINGERPRINT", Build.FINGERPRINT, emulatorCanary = {
-                it.beginsWith("generic") ||
-                        it.beginsWith(EnvironmentCompat.MEDIA_UNKNOWN)
+                it.beginsWith("generic") || it.beginsWith("unknown")
             }),
             checkProperty("Build.HARDWARE", Build.HARDWARE, emulatorCanary = { it.includes("goldfish") }),
             checkProperty("Build.HOST", Build.HOST, probablyEmulatorCanary = { it == "android-test" }),
             checkProperty("Build.ID", Build.ID, emulatorCanary = { it == "FRF91" }),
             checkProperty("Build.MANUFACTURER", Build.MANUFACTURER, emulatorCanary = {
-                it == "unknown" ||
-                        it.includes("Genymotion")
+                it == "unknown" || it.includes("Genymotion")
             }),
             checkProperty("Build.MODEL", Build.MODEL, emulatorCanary = {
                 it == "sdk" ||
@@ -56,6 +53,8 @@ object EmulatorDetector {
             checkProperty("TelephonyManager.getPhoneType()", telephonyManager.phoneType.toString(), probablyEmulatorCanary = { it == "1" }),
             checkProperty("TelephonyManager.getSimCountryIso()", telephonyManager.simCountryIso, probablyEmulatorCanary = { it == "us" }),
             checkProperty("TelephonyManager.getNetworkOperatorName()", telephonyManager.networkOperatorName, probablyEmulatorCanary = { it == "Android" }),
+
+            checkProperty("ro.kernel.qemu", System.getProperty("ro.kernel.qemu"), emulatorCanary = { it != null}),
 
             checkFile("/dev/docket/qemud"),
             checkFile("/dev/qemu_pipe"),
