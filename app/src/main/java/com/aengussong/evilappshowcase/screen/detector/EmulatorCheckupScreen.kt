@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.aengussong.evilappshowcase.analysis_detectors.EmulatorDetector
 import com.aengussong.evilappshowcase.analysis_detectors.EmulatorProbability
 
@@ -26,7 +27,7 @@ fun EmulatorCheckupScreen(telephonyManager: TelephonyManager, innerPadding: Padd
             "   probably is emulator" to CheckupProbability.PROBABLY_DETECTED,
             "   not emulator" to CheckupProbability.NOT_DETECTED
         ),
-        checkupList = EmulatorDetector.emulatorCheckup(telephonyManager).toUI(),
+        checkupList = EmulatorDetector.emulatorCheckup(LocalContext.current, telephonyManager).toUI(),
         modifier = Modifier.padding(innerPadding)
     )
 }
