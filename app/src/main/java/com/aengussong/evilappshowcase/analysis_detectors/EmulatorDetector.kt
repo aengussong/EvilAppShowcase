@@ -50,7 +50,7 @@ object EmulatorDetector {
                         it.includes("Android SDK built for x86")
             }),
             checkProperty("Build.PRODUCT", { Build.PRODUCT }, emulatorCanary = {
-                it == null || it == "sdk" || it == "sdk_x86"|| it == "google_sdk" || it == "vbox86p" || it == "emulator"
+                it == null || it == "sdk" || it == "sdk_x86" || it == "google_sdk" || it == "vbox86p" || it == "emulator"
             }),
             checkProperty("Build.RADIO", { Build.RADIO }, probablyEmulatorCanary = { it == "unknown" }),
             checkProperty(

@@ -22,11 +22,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aengussong.evilappshowcase.screen.detector.EmulatorCheckupScreen
-import com.aengussong.evilappshowcase.screen.detector.FridaCheckupScreen
+import com.aengussong.evilappshowcase.screen.detector.HookingCheckupScreen
 import com.aengussong.evilappshowcase.screen.detector.RootCheckupScreen
 import com.aengussong.evilappshowcase.screen.navigation.ANALYSIS_DETECTOR_CHOOSER
 import com.aengussong.evilappshowcase.screen.navigation.EMULATOR_CHECKUP_SCREEN
-import com.aengussong.evilappshowcase.screen.navigation.FRIDA_CHECKUP_SCREEN
+import com.aengussong.evilappshowcase.screen.navigation.HOOKING_CHECKUP_SCREEN
 import com.aengussong.evilappshowcase.screen.navigation.ROOT_CHECKUP_SCREEN
 import com.aengussong.evilappshowcase.ui.theme.EvilAppShowcaseTheme
 
@@ -54,7 +54,7 @@ fun MainScreen(telephonyManager: TelephonyManager, packageManager: PackageManage
     NavHost(navController, startDestination = ANALYSIS_DETECTOR_CHOOSER) {
         composable(ANALYSIS_DETECTOR_CHOOSER) { AnalysisDetectorChooserScreen(navController) }
         composable(EMULATOR_CHECKUP_SCREEN) { EmulatorCheckupScreen(telephonyManager, innerPadding) }
-        composable(FRIDA_CHECKUP_SCREEN) { FridaCheckupScreen(innerPadding) }
+        composable(HOOKING_CHECKUP_SCREEN) { HookingCheckupScreen(innerPadding) }
         composable(ROOT_CHECKUP_SCREEN) { RootCheckupScreen(packageManager, innerPadding) }
     }
 }
@@ -71,9 +71,9 @@ fun AnalysisDetectorChooserScreen(navController: NavController) {
             Text("Emulator Checkup")
         }
         Button(onClick = {
-            navController.navigate(FRIDA_CHECKUP_SCREEN)
+            navController.navigate(HOOKING_CHECKUP_SCREEN)
         }) {
-            Text("Frida Checkup")
+            Text("Hooking Checkup")
         }
         Button(onClick = {
             navController.navigate(ROOT_CHECKUP_SCREEN)
